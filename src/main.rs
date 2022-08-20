@@ -19,10 +19,15 @@
 // 1b. Sanitize path input (turning " " to "\ ", etc), and make sure it is a valid path and save file.
 // Download latest save file from GitHub and move to game's save folder.
 
+// SAVE FILE SEMANTICS:
+// • Keep Persistent folder.
+// • When updating local folder, set totalPlayTime_Seconds in WorldSettings.txt to 0; when uploading, add local totalPlayTime_Seconds to server's totalPlayTime_Seconds.
+
 // EDGE CASES:
 // • 2 people work on space station/base collaboratively, each starting with save containing the first module. If the first person adds a module, and the second person adds a different module, how do you combine the different crafts?
 
 use std::io;
+use std::path::Path;
 
 fn main() {
     println!("\nWelcome to Fusion Industry's pseudo-multiplayer shared save file!\nDeveloped by pixelgaming579 using Rust and GitHub.");
@@ -30,18 +35,13 @@ fn main() {
 }
 
 fn get_command(input: String) {
-    match input.as_str() {
-        "quit\n" => {},
-        "help\n" => {main_menu();},
-        "rules\n" => {rules_and_info();},
-        "update\n" => {update();},
-        "upload\n" => {upload();},
-        // For Windows, which use \r\n instead of \n.
-        "quit\r\n" => {},
-        "help\r\n" => {main_menu();},
-        "rules\r\n" => {rules_and_info();},
-        "update\r\n" => {update();},
-        "upload\r\n" => {upload();},
+    let clean_input = input.replace("\r", "").replace("\n", ""); // Cleanse input of newlines.
+    match clean_input.as_str() {
+        "quit" => {},
+        "help" => {main_menu();},
+        "rules" => {rules_and_info();},
+        "update" => {update();},
+        "upload" => {upload();},
         _ => {println!("Invalid input!"); main_menu();}
     }
 }
@@ -66,7 +66,9 @@ Violation of these rules may result in the banning of your Discord account from 
     println!(" 3. Try to keep part counts to a minimum, since everyone that uses this has to download the save file.");
     println!(" 4. Don't flood the launchpad or space with random crafts/junk (especially LEO). We don't want to have a Kessler syndrome situation.");
     println!(" 5. Avoid placing crafts where they could be annoying for other users.");
-    println!(" 6. Anything in #rules of the Fusion discord that could apply here will be enforced.");
+    println!(" 6. Do not use cheats for your actual mission (Except part clipping, no burn marks and inf. build space). Using cheats for testing crafts is allowed however.");
+    println!(" 7. BP editing is allowed as long as it isn't game breaking. For example, heat_on_for_creative_use is allowed, but editing engine height for excessive thrust (>2x) is not allowed.");
+    println!(" 8. Anything in #rules of the Fusion discord server that could apply here will be enforced.");
 
     println!("\nExtra Info:");
     println!(" • When updating, your local shared save file will be overwritten. Please ensure that no changes you would like to keep haven't been uploaded before updating your local save.");
@@ -80,9 +82,38 @@ such as abnormal craft deletion or bad moderation, ping pixelgaming579 in the Fu
 }
 
 fn update() {
-    println!("UPDATING!")
+    println!("Updating local file to latest server-side save. Please enter the full path to your \"Worlds\" save folder.");
+    println!("e.g. /Users/home/Library/Application Support/Steam/steamapps/common/Spaceflight Simulator/SpaceflightSimulatorGame.app/Saving/Worlds");
+    
+    let mut save_path: &Path;
+    let mut path_input: String;
+    loop {
+        path_input = String::new();
+        io::stdin().read_line(&mut path_input).expect("Failed to read user input!");
+        path_input = path_input.replace("\r", "").replace("\n", ""); // Cleanse input of newlines.
+        save_path = Path::new(path_input.as_str());
+
+        let mut failed_check = false;
+        if !save_path.exists() {
+            println!("The path you entered does not exist!");
+            failed_check = true;
+        }
+        else if !save_path.is_absolute() {
+            println!("The path you entered is not absolute!");
+            failed_check = true;
+        }
+        else if !save_path.is_dir() {
+            println!("The path you entered is a file, not a directory!");
+            failed_check = true;
+        }
+        if !failed_check {
+            break;
+        }
+    }
+    println!("Downloading latest server-side save, please wait...");
+    
 }
 
 fn upload() {
-    println!("UPLOADING!")
+    println!("WIP!")
 }
