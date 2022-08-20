@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "shared_save_sfs"
+name = "user_client"
 version = "0.1.0"

@@ -1,3 +1,4 @@
-/target
 .DS_Store
-/FusionSharedSaveSystem
+/user_client/target
+/server_client/target
+/server_stuff
