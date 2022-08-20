@@ -1,4 +1,4 @@
 .DS_Store
-/user_client/target
-/server_client/target
+/client_code/target
+/server_code/target
 /server_stuff
