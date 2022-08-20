@@ -21,6 +21,7 @@
 
 // SAVE FILE SEMANTICS:
 // • Keep Persistent folder.
+// • Delete BlueprintPersistent, Quicksaves and RevertLaunch folders.
 // • When updating local folder, set totalPlayTime_Seconds in WorldSettings.txt to 0; when uploading, add local totalPlayTime_Seconds to server's totalPlayTime_Seconds.
 
 // EDGE CASES:
